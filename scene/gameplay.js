@@ -19,8 +19,6 @@ class gameplay extends Phaser.Scene{
     }
     create(){
         this.board = new Board({
-            rows: gameOptions.cardRow,
-            columns: gameOptions.cardColumn,
             items : [0,1,2,3,4]
         });
 
@@ -29,14 +27,12 @@ class gameplay extends Phaser.Scene{
 
         this.board.generateField();
         this.canPick = true;
-        this.canDrag = false;
         this.drawField();
         this.input.on("pointerdown", this.selectCard, this);
     }
     drawField(){
-        this.poolArray = [];
-        for(let i = 0; i < this.board.getRows(); i ++){
-            for(let j = 0; j < this.board.getColumns(); j ++){
+        for(let i = 0; i < this.board.gameArray.length; i ++){
+            for(let j = 0; j < this.board.gameArray[i].length; j ++){
                 var logoX = (gameOptions.cardWidth - gameOptions.spriteSize) / 2;
                 var logoY = (gameOptions.cardHeight - gameOptions.spriteSize) / 2;
                 var fundocarta = this.add.sprite(10,4, "fundocarta", 0);

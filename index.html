@@ -1,19 +1,275 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<style type="text/css">
-		body{
-			background: #000000;
-			padding:0px;
-			margin:0px;
-		}
-	</style>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.53.1/dist/phaser.min.js"></script>
-    <script src = "board.js"></script>
-    <script src = "scene/start.js"></script>
-    <script src = "scene/gameplay.js"></script>
-	<script src = "game.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="   crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" ></script>
+		<script src="//cdn.jsdelivr.net/npm/phaser@3.53.1/dist/phaser.min.js"></script>
+		<script src="board.js"></script>
+		<script src="scene/start.js"></script>
+		<script src="scene/gameplay.js"></script>
 	</head>
 	<body>
+		<div id="menu" class="container h-100" style="width:340px;margin-top: 100px;border: 1px solid black;">
+			<div class="row justify-content-center text-center">
+				<h1>Memorizando<br/>e<br/>Aprendendo</h1>
+			</div>
+			<div class="row justify-content-center">
+				<img id="start" src="static/images/iniciar.png" onclick="start"/>
+			</div>
+			<div class="row justify-content-center">
+				<img src="static/images/carregar.png" data-toggle="modal" data-target="#loadModal" />
+			</div>
+			<div class="row justify-content-center">
+				<img src="static/images/opções.png" data-toggle="modal" data-target="#optionsModal" />
+			</div>
+			<div class="row justify-content-center">
+				<img id="quit" src="static/images/sair.png" onclick="sair" />
+			</div>
+        </div>
+		<div id="loadModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+			  <!-- Modal content-->
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h4 class="modal-title">Carregar</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>Copiar configurações</label>
+						<textarea class="w-100 h-100"></textarea>
+					</div>
+				</div>
+				<div class="modal-footer">
+				  <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			  </div>	  
+			</div>
+		</div>
+		<div id="optionsModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+			  <!-- Modal content-->
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h4 class="modal-title">Opções</h4>
+				  <button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-4">
+							<label>Cartas</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-4">
+							<label>Repetidas</label>
+							<input id="txtRepetidas" type="text" class="form-control" value="2">
+						</div>
+						<div class="form-group col-md-4">
+							<label>Diferentes</label>
+							<input id="txtDiferentes" type="text" class="form-control" value="5">
+						</div>
+						<div class="form-group col-md-4">
+							<label>Total</label>
+							<input type="text" id="totalCartas" class="form-control" value="10" disabled />
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-3">
+							<label>Largura</label>
+							<input id="width" type="text" class="form-control" value="80">
+						</div>
+						<div class="form-group col-md-3">
+							<label>Altura</label>
+							<input id="height" type="text" class="form-control" value="120">
+						</div>
+						<div class="form-group col-md-2">
+							<label>Colunas</label>
+							<input id="columns" type="text" class="form-control" />
+						</div>
+						<div class="form-group col-md-4">
+							<label>Tipo</label>
+							<select class="form-control">
+								<option value="0">Imagens</option>
+								<option value="1">Texto</option>
+								<option value="2">Perguntas e Respostas</option>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col">
+							<input id="onlyone" type="checkbox" >
+							<label>1 clique somente</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col">
+							<input id="big" type="checkbox" >
+							<label>Mostrar detalhe ao clicar</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col">
+							<input id="disapper" type="checkbox" >
+							<label>Desaparecer quando acertar</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="imagens-tab" data-toggle="tab" href="#imagens" role="tab" aria-controls="imagens" aria-selected="true">Imagens</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="texto-tab" data-toggle="tab" href="#texto" role="tab" aria-controls="texto" aria-selected="false">Texto</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="perguntas-e-respostas-tab" data-toggle="tab" href="#perguntas-e-respostas" role="tab" aria-controls="perguntas-e-respostas" aria-selected="false">Perguntas e Respostas</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="myTabContent">
+								<div class="tab-pane fade show active" id="imagens" role="tabpanel" aria-labelledby="imagens-tab"><img src="static/sprites/animals.png"/></div>
+								<div class="tab-pane fade" id="texto" role="tabpanel" aria-labelledby="texto-tab">
+									<div class="container">
+										<div class="row">
+											<div class="col">
+												<label>Texto</label>
+											</div>
+										</div>
+										<div class="row">
+											<div class="form-group col-md-9">
+												<input type="text" id="txtTexto" class="form-control" />
+											</div>
+											<div class="col-md-3">
+												<button id="buttonTexto" class="btn btn-primary">+</button>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<table id="tableTexto" class="table table-striped">
+													<thead class="thead-dark">
+														<tr>
+															<th>Texto</th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade" id="perguntas-e-respostas" role="tabpanel" aria-labelledby="perguntas-e-respostas-tab">
+									<div class="container">
+										<div class="row">
+											<div class="form-group col">
+												<label>Pergunta</label>
+												<textarea id="txtPergunta" class="form-control"></textarea>
+											</div>
+										</div>
+										<div class="row">
+											<div class="form-group col">
+												<label>Resposta</label>
+												<textarea id="txtResposta" class="form-control"></textarea>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<button id="buttonPerguntas" class="btn btn-primary">+</button>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<table id="tablePerguntas" class="table table-striped">
+													<thead class="thead-dark">
+														<tr>
+															<th>Perguntas</th>
+															<th>Respostas</th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+				</div>
+			  </div>	  
+			</div>
+		</div>
+		<script>
+			document.getElementById('start').addEventListener('click', function (e) {
+				startGame();
+			});
+			document.getElementById('quit').addEventListener('click', function (e) {
+				window.location.href = "https://game-awake.github.io/Web-Exemplos/gamespanel/";
+			});
+
+			function getInt(name) {
+				var value = parseInt($(name).val());
+				if(isNaN(value)) {
+					value = 1;
+				}
+				$(name).val(value);
+				return value;
+			}
+
+			function calcTotal() {
+				$("#totalCartas").val(gameOptions.cardRepeat * gameOptions.cardDiferent);
+			}
+
+			$(function() {
+				$("#columns").val(gameOptions.boardColumns);
+
+				var $tableTexto = $('#tableTexto tbody');
+				var $buttonTexto = $('#buttonTexto');
+
+				var $tablePerguntas = $('#tablePerguntas tbody');
+				var $buttonPerguntas = $('#buttonPerguntas');
+
+				$("#txtRepetidas").change(function() {
+					gameOptions.cardRepeat = getInt("#txtRepetidas");
+					calcTotal();
+				});
+
+				$("#txtDiferentes").change(function() {
+					gameOptions.cardDiferent = getInt("#txtDiferentes");
+					calcTotal();
+				});
+
+				$("#width").change(function() {
+					gameOptions.cardWidth = getInt("#width");
+				});
+
+				$("#height").change(function() {
+					gameOptions.cardHeight = getInt("#height");
+				});
+
+				$("#columns").change(function() {
+					gameOptions.boardColumns = getInt("#columns");
+				});
+
+				$buttonTexto.click(function () {
+					$tableTexto.append("<tr><td>"+$("#txtTexto").val()+"</td></tr>");
+					$("#txtTexto").val("");
+					$("#txtTexto").focus();
+				});
+				$buttonPerguntas.click(function () {
+					$tablePerguntas.append("<tr><td>"+$("#txtPergunta").val()+"</td><td>"+$("#txtResposta").val()+"</td></tr>");
+					$("#txtPergunta").val("");
+					$("#txtResposta").val("");
+					$("#txtPergunta").focus();
+				});
+			})
+		</script>
+		<script src = "game.js"></script>
 	</body>
 </html>

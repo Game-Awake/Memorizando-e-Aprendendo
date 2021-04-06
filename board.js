@@ -5,9 +5,16 @@ class Board {
         if(obj == undefined){
             obj = {}
         }
-        this.rows = (obj.rows != undefined) ? obj.rows : 5;
-        this.columns = (obj.columns != undefined) ? obj.columns : 2;
         this.items = (obj.items != undefined) ? obj.items : [0,1,2,3,4];
+    }
+
+    getRows() {
+        var total = gameOptions.cardDiferent * gameOptions.cardRepeat;
+        var rows = Math.trunc(total / gameOptions.boardColumns);
+        if(total % gameOptions.boardColumns > 0) {
+            rows++;
+        }
+        return rows;
     }
 
     // Cria o campo do jogo.
@@ -20,21 +27,45 @@ class Board {
         this.topMargin = 10;
 
         var stack = [];
+        var total = gameOptions.cardDiferent * gameOptions.cardRepeat;
+
         // Cria lista com as cartas possíveis
-        for(var i = 0; i < this.items.length; i ++){
-            for(var j=0;j<2;j++) {
-                stack.push(i);
+        let i = 0;
+        for(; i < gameOptions.cardDiferent; i ++){
+            for(var j=0;j<gameOptions.cardRepeat;j++) {
+                stack.push(i % this.items.length);
             }
         }
 
         // Para cada posição de carta no tabuleiro, escolhe uma das possibilidades e remove a lista de possibilidades
-        for(let i = 0; i < this.rows; i ++){
+        i = 0;
+        let current = 0;
+
+        while(current + gameOptions.boardColumns <= total) {
             this.gameArray[i] = [];
-            for(let j = 0; j < this.columns; j ++){
+            for(let j = 0; j < gameOptions.boardColumns; j++){
                 let randomIndex = Math.floor(Math.random() * stack.length);
                 let randomValue = stack[randomIndex];                
                 stack.splice(randomIndex,1);
 
+                this.gameArray[i][j] = {
+                    container:null,
+                    value: randomValue,
+                    isFlipped: false,
+                }
+                current++;
+            }
+            i++;
+        }
+
+        if(stack.length > 0) {
+            gameArray[i] = [];
+            var rest = stack.length;
+            for(let j = 0; j < rest; j++){
+                let randomIndex = Math.floor(Math.random() * stack.length);
+                let randomValue = stack[randomIndex];                
+                stack.splice(randomIndex,1);
+    
                 this.gameArray[i][j] = {
                     container:null,
                     value: randomValue,
@@ -60,16 +91,6 @@ class Board {
         } catch {
         } 
         return item;
-    }
-
-    // Retorna o total de linhas
-    getRows(){
-        return this.rows;
-    }
-
-    // Retorna o total de colunas
-    getColumns(){
-        return this.columns;
     }
 
 }
